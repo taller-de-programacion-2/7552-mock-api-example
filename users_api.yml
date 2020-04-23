@@ -1,0 +1,124 @@
+swagger: '2.0'
+info:
+  description: Taller II - Mock API
+  version: 1.0.0
+  title: Taller II - Mock API
+  # put the contact info for your development or API team
+  contact:
+    email: arojas@fi.uba.ar.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+
+paths:
+  /users:
+    get:
+      tags:
+      - developers
+      summary: searches users
+      operationId: searchUSers
+      description: |
+        By passing in the appropriate options, you can search for
+        available users in the system
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: searchString
+        description: pass an optional search string for looking up an user
+        required: false
+        type: string
+      - in: query
+        name: skip
+        description: number of records to skip for pagination
+        type: integer
+        format: int32
+        minimum: 0
+      - in: query
+        name: limit
+        description: maximum number of records to return
+        type: integer
+        format: int32
+        minimum: 0
+        maximum: 50
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        400:
+          description: bad input parameter
+    post:
+      tags:
+      - admins
+      summary: adds an user
+      operationId: addUSer
+      description: Adds an user to the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: User
+        description: User to add
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        201:
+          description: user created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing user already exists
+definitions:
+  User:
+    type: object
+    required:
+    - id
+    - name
+    - lastname
+    - birthday
+    properties:
+      id:
+        type: string
+        format: string
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      name:
+        type: string
+        example: Co Vid
+      birthday:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+      company:
+        $ref: '#/definitions/Company'
+  Company:
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: ACME Corporation
+      homePage:
+        type: string
+        format: url
+        example:  https://www.acme-corp.com
+      phone:
+        type: string
+        example: 408-867-5309
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /agrojas/7552-mock-api-example/1.0.0
+schemes:
+ - https
